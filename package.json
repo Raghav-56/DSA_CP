@@ -1,0 +1,16 @@
+{
+  "name": "dsa-cp-explorer",
+  "version": "1.0.0",
+  "description": "Simple static DSA/CP solutions browser - just open index.html!",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Just open index.html in your browser!' && start index.html",
+    "generate": "node generate-structure.js",
+    "refresh": "node generate-structure.js && echo Configuration updated! You can now refresh your browser.",
+    "watch": "node watch-and-generate.js",
+    "dev": "node watch-and-generate.js"
+  },
+  "keywords": ["dsa", "competitive-programming", "portfolio", "static-site"],
+  "author": "",
+  "license": "MIT"
+}

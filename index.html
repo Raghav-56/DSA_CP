@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA/CP Solutions Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" id="prism-light-theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" id="prism-dark-theme" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-code text-2xl"></i>
+                    <h1 class="text-2xl font-bold">DSA/CP Solutions Explorer</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="refresh-btn" class="p-2 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors" title="Refresh folder structure">
+                        <i class="fas fa-sync-alt" id="refresh-icon"></i>
+                    </button>
+                    <button id="theme-toggle" class="p-2 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search problems..." 
+                               class="pl-10 pr-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 placeholder-gray-500 dark:placeholder-gray-400">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-500 dark:text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Breadcrumb -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700" id="breadcrumb" style="display: none;">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center space-x-2 text-sm">
+                <button id="home-btn" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                    <i class="fas fa-home mr-1"></i>Home
+                </button>
+                <span class="text-gray-400 dark:text-gray-500">/</span>
+                <span id="breadcrumb-path" class="text-gray-600 dark:text-gray-300"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Home View -->
+        <div id="home-view" class="fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-4">Welcome to Your Coding Journey</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    Explore your competitive programming solutions organized by contest sets and difficulty levels.
+                    Track your progress and review your coding evolution.
+                </p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl p-6 card-hover border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center">
+                        <div class="bg-blue-500 rounded-lg p-3">
+                            <i class="fas fa-trophy text-white text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Problem Sets</h3>
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="total-sets">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl p-6 card-hover border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center">
+                        <div class="bg-green-500 rounded-lg p-3">
+                            <i class="fas fa-code text-white text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Total Problems</h3>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400" id="total-problems">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl p-6 card-hover border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center">
+                        <div class="bg-purple-500 rounded-lg p-3">
+                            <i class="fas fa-file-code text-white text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Total Attempts</h3>
+                            <p class="text-2xl font-bold text-purple-600 dark:text-purple-400" id="total-attempts">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem Sets -->
+            <div id="problem-sets-container">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Problem Sets</h3>
+                <div id="problem-sets" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- Difficulty View -->
+        <div id="difficulty-view" class="fade-in" style="display: none;">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2" id="current-set-title"></h2>
+                <p class="text-gray-600 dark:text-gray-300">Select a difficulty level to explore problems</p>
+            </div>
+            <div id="difficulties" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
+
+        <!-- Problems View -->
+        <div id="problems-view" class="fade-in" style="display: none;">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2" id="current-difficulty-title"></h2>
+                <p class="text-gray-600 dark:text-gray-300">Click on a problem to view your solutions</p>
+            </div>
+            <div id="problems" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Problem Detail View -->
+        <div id="problem-detail-view" class="fade-in" style="display: none;">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2" id="current-problem-title"></h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Your solution attempts for this problem</p>
+                
+                <!-- Attempt Tabs -->
+                <div class="flex flex-wrap gap-2 mb-6" id="attempt-tabs"></div>
+            </div>
+            
+            <!-- Code Display -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div class="bg-gray-50 dark:bg-gray-700 px-6 py-3 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-file-code text-gray-600 dark:text-gray-400"></i>
+                        <span class="font-medium text-gray-800 dark:text-white" id="current-file-name"></span>
+                    </div>
+                    <button id="copy-code-btn" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="code-container bg-gray-50 dark:bg-gray-900">
+                    <pre class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 p-4"><code id="code-display" class="language-cpp"></code></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-800 dark:text-white font-medium">Loading...</span>
+        </div>
+    </div>
+
+    <script src="dynamic-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
